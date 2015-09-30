@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import study.models.User;
+import study.models.User.Permissions;
 import study.repositories.UserRepository;
 
 @Service
@@ -22,7 +23,8 @@ public class UsersService {
 	@PostConstruct
 	@Transactional
 	public void createAdminUser() {
-		register("admin", "admin@mail.com", "qwerty");
+		register("admin", "admin@mail.com", "qwerty",Permissions.PERMISSIONS_ADMIN);
+		register("user", "user@mail.com", "qwerty",Permissions.PERMISSIONS_USER);
 	}
 	
 	@Transactional(readOnly = false)
@@ -32,6 +34,16 @@ public class UsersService {
 		
 		User u = new User(login, email.toLowerCase(), passHash);
 
+		// підпишемо користувача на самого себе
+
+		usersRepo.save(u);
+	}
+	@Transactional(readOnly = false)
+	public void register(String login, String email, String pass,Permissions permission) {
+		String passHash = new BCryptPasswordEncoder().encode(pass);
+		//String passHash = pass;
+		User u = new User(login, email.toLowerCase(), passHash);
+		u.setPermission(permission);
 		// підпишемо користувача на самого себе
 
 		usersRepo.save(u);

@@ -29,7 +29,7 @@ import study.UrlCutterApplication;
 })
 public class User implements UserDetails{
 	private static final long serialVersionUID = -532710433531902917L;
-	enum Permissions{PERMISSIONS_ADMIN,PERMISSIONS_USER};
+	public enum Permissions{PERMISSIONS_ADMIN,PERMISSIONS_USER};
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -92,7 +92,17 @@ public class User implements UserDetails{
 	}
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return AuthorityUtils.createAuthorityList("USER");
+		//return AuthorityUtils.createAuthorityList("USER");
+		switch(permission){
+		case PERMISSIONS_ADMIN:
+			return AuthorityUtils.createAuthorityList("ADMIN");
+		case PERMISSIONS_USER:
+			return AuthorityUtils.createAuthorityList("USER");
+		default:
+			return AuthorityUtils.createAuthorityList("HACKER");
+			
+		}
+		
 	}
 	@Override
 	public boolean isAccountNonExpired() {

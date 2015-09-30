@@ -21,6 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.authorizeRequests()
+        .antMatchers("/admin").hasAuthority("ADMIN").anyRequest().authenticated()
             .antMatchers("/","/register").permitAll() // дозволити анонімним користувачам заходити на '/' 
             .anyRequest().authenticated() // всі інші запити потребують аутентифікації
             .and()
@@ -31,7 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .permitAll() // дозволити всім заходити на форму логіну
             .and()
         .logout()
-            .permitAll(); 
+            .permitAll();
+
+        
     }
 
     @Override

@@ -74,6 +74,11 @@ public class IndexController {
 		// model.addAttribute("linksInfo", postsService.getLinksInfo());
         return "linkinfo";
     }
+	@RequestMapping("/admin")
+    public String admin(Model model) {
+		// model.addAttribute("linksInfo", postsService.getLinksInfo());
+        return "admin";
+    }
 	
 	@RequestMapping("/userinfo")
     public String userinfo(Model model) {
