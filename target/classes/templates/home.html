@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"> 
+  <head>
+    <title>ZIGZAG</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <link rel="stylesheet" href="css/bootstrap.css"/>
+   <link rel="stylesheet" href="zigzag/css/main.css"/>
+   <link href="zigzag/css/stylish-portfolio.css" rel="stylesheet"/>
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
+<script src="js/bootstrap.min.js" type="text/javascript"></script>
+  <script src="jquery.js"></script> 
+   
+  </head>
+  <body>
+  
+  <!-- Navigation -->
+    <a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
+    <nav id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle"><i class="fa fa-times"></i></a>
+            <li>
+                <a href="admin" onclick = '$("#menu-close").click();' >Administration</a>
+            </li>         
+        </ul>       
+    </nav>
+    
+ 
+ <header id="top" class="header">
+        <div class="text-vertical-center">
+            <h1>URL SCISSORS <span class="glyphicon glyphicon-scissors"></span> </h1>
+            <h3>
+             <div class="text-info">Nice to meet u, <span class="text-info bg-success"  
+ th:text="${currentUser.login}">user_name</span></div>
+<a class="btn btn-link " href="/logout"><span class="glyphicon glyphicon-log-out"></span> Вийти</a>
+            </h3>
+            <br/>
+ <form method="POST" action="/post">
+            <div class="input-group input-group-lg">
+  <span class="input-group-addon" id="sizing-addon1"><span class="glyphicon glyphicon-link"></span></span>
+  <textarea type="text" class="form-control" placeholder="paste data here" aria-describedby="sizing-addon1" name="data"/>
+</div>
+<button type="submit" class="btn btn-dark btn-lg">Cut</button>
+</form>
+</div>
+    </header>
+    
+    
+<div class="container">
+
+
+    <div class="row   custyle">
+    <table class="table table-striped custab">
+    <thead>
+        <tr>
+            <th>Short link</th>
+            <th>Data</th>
+            <th>Creation Time</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    
+	<div class="row" th:each="linkInfo: ${linksInfo}">
+            <tr>
+                <td th:text="${linkInfo.id}"></td>
+                <td th:text="${linkInfo.data}"></td>
+                <td th:text="${#dates.format(linkInfo.creationTime, 'HH:mm dd.MM.yy')}"></td>
+                <td class="text-center"><a class='btn btn-info btn-xs' th:href="@{'http://g.com/'+${linkInfo.id}}">
+                <span class="glyphicon glyphicon-edit"></span> Edit</a> 
+                <a th:href="${'removelink?link_id='+linkInfo.id}" class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-remove"></span> Del</a>
+                <a href="linkinfo" class="btn btn-info btn-xs">
+                <span class="glyphicon glyphicon-signal"></span> Info</a>
+                </td>
+                
+            </tr>    
+	</div>
+    </table>
+    </div>
+</div>
+
+<div class="text-center">
+ <ul class="pagination" th:if="${pagesCount} > 1">
+		    <li th:each="page: ${#numbers.sequence(1, pagesCount)}" th:class="${page} == ${currentPage} ? 'active'">
+		      <a href="#" th:href="@{/home(page=${page})}">
+		        <span th:text="${page}"></span>
+		      </a>
+		    </li>
+		</ul>
+</div>
+ <!-- Custom Theme JavaScript -->
+    <script>
+    // Closes the sidebar menu
+    $("#menu-close").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+
+    // Opens the sidebar menu
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+
+    // Scrolls to the selected menu item on the page
+    $(function() {
+        $('a[href*=#]:not([href=#])').click(function() {
+            if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
+
+                var target = $(this.hash);
+                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                if (target.length) {
+                    $('html,body').animate({
+                        scrollTop: target.offset().top
+                    }, 1000);
+                    return false;
+                }
+            }
+        });
+    });
+    </script>
+
+  </body>
+</html>

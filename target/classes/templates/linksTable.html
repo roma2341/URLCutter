@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="row col-md-6 col-md-offset-2 custyle">
+    <table class="table table-striped custab">
+    <thead>
+    <a href="#" class="btn btn-primary btn-xs pull-right"><b>+</b> Add new categories</a>
+        <tr>
+            <th>Short link</th>
+            <th>Data</th>
+            <th>Creation Time</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+	<div class="row" th:each="linkInfo: ${linksInfo}">
+            <tr>
+                <td>th:text="${linkInfo.shortLink}"</td>
+                <td>th:text="${linkInfo.data}"</td>
+                <td>th:text="${linkInfo.creationTime}"</td>
+                <td class="text-center"><a class='btn btn-info btn-xs' th:href="@{'http://g.com/'+${linkInfo.shortLink}}><span class="glyphicon glyphicon-edit"></span> Edit</a> <a href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Del</a></td>
+            </tr>    
+	</div>
+    </table>
+    </div>
+</div>
+
+<!-- output links created by user -->
+       <div class="container">
+        <div class="row" th:each="linkInfo: ${linksInfo}">
+            <hr/>
+            <strong class="pull-left primary-font" th:text="${linkInfo.shortLink}">linkInfo.shortLink</strong>
+            <small class="pull-right text-muted">
+               <span class="glyphicon glyphicon-time"></span> 
+                <span th:text="${linkInfo.creationTime}">linkInfo.creationTime</span>
+                <p><a class="btn btn-primary" th:href="@{'http://g.com/'+${linkInfo.shortLink}}" role="button">Details</a></p>
+            </small>
+            <br/>
+            <div class="text-justify" th:text="${linkInfo.data}">${linkInfo.data}</div>
+        </div>
+        <hr/>
+    </div>
+<!-- finish -->  
