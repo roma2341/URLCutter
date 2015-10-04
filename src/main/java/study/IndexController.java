@@ -1,21 +1,29 @@
 package study;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import study.models.LinkInfo;
 import study.models.User;
 import study.services.LinkInfosService;
 import study.services.UsersService;
+import study.utils.MyUtils;
 
 @Controller
 public class IndexController {
@@ -46,12 +54,25 @@ public class IndexController {
         return "home";
     }
 
-	
+	@RequestMapping(value = "/z{linkId}", method = RequestMethod.GET)
+	public String onShortLink(@PathVariable Long linkId, HttpServletResponse response) throws IOException {
+		String shortLink = linkInfosService.getLinkInfo(linkId).getData();
+		if (MyUtils.isLink(shortLink))
+	    return "redirect:"+shortLink;
+		else {
+			return "redirect:textview?link_id="+linkId;
+		}
+	}
 
 	@RequestMapping(value ="/login", method = RequestMethod.GET)
     public String loginForm() {
 		// model.addAttribute("linksInfo", postsService.getLinksInfo());
         return "login";
+    }
+	@RequestMapping(value ="/textview", method = RequestMethod.GET)
+    public String textview(Model model,@RequestParam("link_id") String linkId, HttpServletResponse response) {
+		model.addAttribute("linkInfo", linkInfosService.getLinkInfo(Long.parseLong(linkId)));
+        return "textview";
     }
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -68,6 +89,24 @@ public class IndexController {
 		linkInfosService.removeLinkInfo(linkId);
 		return "redirect:/home";
 	}
+	@RequestMapping(value = "/removeuser", method = RequestMethod.GET)
+	public String removeUser(@RequestParam("user_id") Long userId, HttpServletRequest request) {
+		if(User.getCurrentUserId()==userId)
+		{
+			throw new IllegalArgumentException("You can't delete yourself");
+		}
+		usersService.removeUser(userId);
+		return "redirect:/admin";
+	}
+	@ExceptionHandler
+	void handleIllegalArgumentException(IllegalArgumentException e, HttpServletResponse response) throws IOException {
+	    response.sendError(HttpStatus.BAD_REQUEST.value());
+	}
+	
+	/*@ExceptionHandler(IllegalArgumentException.class)
+	void handleBadRequests(HttpServletResponse response) throws IOException {
+	    response.sendError(HttpStatus.BAD_REQUEST.value(), "Please try again width different user");
+	}*/
 	
 	@RequestMapping("/linkinfo")
     public String linkinfo(Model model) {
@@ -81,6 +120,7 @@ public class IndexController {
 		 model.addAttribute("pagesCount", postsPage.getTotalPages());
 		 model.addAttribute("currentPage", page);
 		 model.addAttribute("currentUser", User.getCurrentUser());
+		 model.addAttribute("currentUserId", User.getCurrentUserId());
 		 
         return "admin";
     }
@@ -97,4 +137,5 @@ public class IndexController {
 	        linkInfosService.addLinkInfo(new LinkInfo(linkData));
 	        return "redirect:home";
 	    }
+	 
 }

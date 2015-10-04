@@ -33,7 +33,7 @@
 <body>
 
 	<div class="container-fluid main-container">
-	
+	<a href= "/home" class="btn btn-primary center-block" role="button">Home</a>
 	<div class="row   custyle">
     <table class="table table-striped custab">
     <thead>
@@ -44,21 +44,23 @@
             <th class="text-center">Action</th>
         </tr>
     </thead>
-    
+   
 	<div class="row" th:each="user: ${users}">
+	 <div th:if="${user.id}!=${currentUserId}">	<!-- hide current user -->
             <tr>
                 <td th:text="${user.id}"></td>
                 <td th:text="${user.login}"></td>
                 <td th:text="${user.email}"></td>
                 <td class="text-center"><a class='btn btn-info btn-xs' th:href="@{'http://g.com/'+${user.id}}">
                 <span class="glyphicon glyphicon-edit"></span> Edit</a> 
-                <a th:href="${'removelink?link_id='+user.id}" class="btn btn-danger btn-xs">
+                <a th:href="${'removeuser?user_id='+user.id}" class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-remove"></span> Del</a>
                 <a href="linkinfo" class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon-signal"></span> Info</a>
                 </td>
                 
-            </tr>    
+            </tr>
+     </div>
 	</div>
     </table>
     </div>

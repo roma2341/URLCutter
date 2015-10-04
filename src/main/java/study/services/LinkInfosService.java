@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import scala.annotation.meta.getter;
 import study.models.LinkInfo;
 import study.models.User;
 import study.repositories.LinkInfoRepository;
@@ -45,5 +46,8 @@ public class LinkInfosService {
 	   }
 	   public void removeLinkInfo(Long id){
 		   linksRepo.delete(id);
+	   }
+	   public LinkInfo getLinkInfo(Long id){
+		   return linksRepo.findOne(id);
 	   }
 }

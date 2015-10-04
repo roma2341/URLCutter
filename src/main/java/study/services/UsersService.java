@@ -57,6 +57,9 @@ public class UsersService {
 
 		usersRepo.save(u);
 	}
+	public void removeUser(Long id){
+		   usersRepo.delete(id);
+	   }
 	
 }
 
