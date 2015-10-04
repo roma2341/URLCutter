@@ -32,15 +32,14 @@ public class LinkInfosService {
 	   
 	   @Transactional
 	   public Page<LinkInfo> getLinksInfo(int page, int pageSize){
-		   User currentUser = usersRepo.findOne(1L);
 			
-			return linksRepo.findByAuthorId(currentUser.getId(), new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
+			return linksRepo.findByAuthorId(User.getCurrentUserId(), new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
 			
 	   }
 	   @Transactional
 	   public void addLinkInfo(LinkInfo singleLinkInfo)
 	   {
-		   User currentUser = usersRepo.findOne(1L);
+		   User currentUser = usersRepo.findOne(User.getCurrentUserId());
 		   singleLinkInfo.setAuthor(currentUser);
 		   linksRepo.save(singleLinkInfo);
 	   }

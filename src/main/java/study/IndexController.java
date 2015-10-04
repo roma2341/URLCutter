@@ -75,8 +75,13 @@ public class IndexController {
         return "linkinfo";
     }
 	@RequestMapping("/admin")
-    public String admin(Model model) {
-		// model.addAttribute("linksInfo", postsService.getLinksInfo());
+    public String admin(Model model, @RequestParam(value = "page", defaultValue = "1") int page) {
+		Page<User> postsPage = usersService.getUsers(page, 5); 
+		 model.addAttribute("users", postsPage.getContent());
+		 model.addAttribute("pagesCount", postsPage.getTotalPages());
+		 model.addAttribute("currentPage", page);
+		 model.addAttribute("currentUser", User.getCurrentUser());
+		 
         return "admin";
     }
 	
