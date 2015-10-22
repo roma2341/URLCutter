@@ -9,58 +9,44 @@
   <script src="jquery.js"></script> 
   <link rel="stylesheet" href="css/bootstrap.css"/>
     <style type="text/css">
-        h1.page-header {
-    margin-top: -5px;
-}
 
-.sidebar {
-    padding-left: 0;
-}
 
-.main-container { 
-    background: #FFF;
-    padding-top: 15px;
-    margin-top: -20px;
-}
-
-.footer {
-    width: 100%;
-}  
     </style>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </head>
 <body>
 
-	<div class="container-fluid main-container">
-	<a href= "/home" class="btn btn-primary center-block" role="button">Home</a>
-	<div class="row   custyle">
+<div class="container">
+
+
+    <div class="row   custyle">
     <table class="table table-striped custab">
     <thead>
         <tr>
-            <th>Id</th>
-            <th>Login</th>
-            <th>Email</th>
+            <th>Short link</th>
+            <th>Data</th>
+            <th>Creation Time</th>
             <th class="text-center">Action</th>
         </tr>
     </thead>
-   
-	<div class="row" th:each="user: ${users}">
-	 <div th:if="${user.id}!=${currentUserId}">	<!-- hide current user -->
+    
+	<div class="row" th:each="linkInfo: ${linksInfo}">
             <tr>
-                <td th:text="${user.id}"></td>
-                <td th:text="${user.login}"></td>
-                <td th:text="${user.email}"></td>
-                <td class="text-center"><a class='btn btn-info btn-xs' th:href="@{'http://g.com/'+${user.id}}">
+                <td >
+                <a th:href="'/z'+${linkInfo.id}" th:text="${linkInfo.id}"> </a>
+                </td>
+                <td th:text="${linkInfo.data}"></td>
+                <td th:text="${#dates.format(linkInfo.creationTime, 'HH:mm dd.MM.yy')}"></td>
+                <td class="text-center"><a class='btn btn-info btn-xs' th:href="@{'http://g.com/'+${linkInfo.id}}">
                 <span class="glyphicon glyphicon-edit"></span> Edit</a> 
-                <a th:href="${'removeuser?user_id='+user.id}" class="btn btn-danger btn-xs">
+                <a th:href="${'removelink?link_id='+linkInfo.id}" class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-remove"></span> Del</a>
-                <a th:href="${'linklist?user_id='+user.id}" class="btn btn-info btn-xs">
+                <a th:href="${'linkinfo?link_id='+linkInfo.id}" class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon-signal"></span> Info</a>
                 </td>
                 
-            </tr>
-     </div>
+            </tr>    
 	</div>
     </table>
     </div>

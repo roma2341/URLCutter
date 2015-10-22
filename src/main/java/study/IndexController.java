@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import eu.bitwalker.useragentutils.UserAgent;
 import study.models.LinkInfo;
 import study.models.User;
 import study.services.LinkInfosService;
@@ -55,8 +56,31 @@ public class IndexController {
     }
 
 	@RequestMapping(value = "/z{linkId}", method = RequestMethod.GET)
-	public String onShortLink(@PathVariable Long linkId, HttpServletResponse response) throws IOException {
+	public String onShortLink(Model model,@PathVariable Long linkId,HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String shortLink = linkInfosService.getLinkInfo(linkId).getData();
+		UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
+		String browserName = userAgent.getBrowser().getName();
+		String osName = userAgent.getOperatingSystem().getName();
+		System.out.println(browserName); //+ " " + userAgent.getBrowserVersion());
+		//Browser detect
+		LinkInfo linkInfo = linkInfosService.getLinkInfo(linkId);
+		linkInfo.incCountAll();
+		if (browserName.contains("Chrome") || browserName.contains("Chrome Mobile")) 
+			linkInfo.incCountChrome();
+		else if (browserName.contains("Firefox"))
+			linkInfo.incCountMozilla();
+		else if (browserName.contains("Internet Explorer") || browserName.contains("IE Mobile"))
+			linkInfo.incCountIE();
+		//
+			if(osName.contains("Windows"))
+				linkInfo.incCountWindows();
+			else if (osName.contains("Linux"))
+				linkInfo.incCountLinux();
+		System.out.println("chrome:"+linkInfo.getCountChrome());
+		System.out.println("windows:"+linkInfo.getCountWindows());
+		linkInfosService.updateLinkInfo(linkInfo,linkId);
+			
+		
 		if (MyUtils.isLink(shortLink))
 	    return "redirect:"+shortLink;
 		else {
@@ -86,6 +110,8 @@ public class IndexController {
 	}
 	@RequestMapping(value = "/removelink", method = RequestMethod.GET)
 	public String removeLink(@RequestParam("link_id") Long linkId, HttpServletRequest request) {
+		if (User.getCurrentUser().getAuthorities().contains("ADMIN") ||
+				linkInfosService.getLinkInfo(linkId).getAuthor().getId()==User.getCurrentUserId())
 		linkInfosService.removeLinkInfo(linkId);
 		return "redirect:/home";
 	}
@@ -109,8 +135,9 @@ public class IndexController {
 	}*/
 	
 	@RequestMapping("/linkinfo")
-    public String linkinfo(Model model) {
+    public String linkinfo(Model model,@RequestParam("link_id") Long linkId) {
 		// model.addAttribute("linksInfo", postsService.getLinksInfo());
+		model.addAttribute("linksInfo", linkInfosService.getLinkInfo(linkId));
         return "linkinfo";
     }
 	@RequestMapping("/admin")
@@ -124,6 +151,17 @@ public class IndexController {
 		 
         return "admin";
     }
+	
+	@RequestMapping("/linklist")
+    public String linklist(Model model,@RequestParam("user_id") Long userId, @RequestParam(value = "page", defaultValue = "1") int page) {
+		Page<LinkInfo> postsPage = linkInfosService.getLinksInfoByUserId(page, 5,userId); 
+		 model.addAttribute("linksInfo", postsPage.getContent());
+		 model.addAttribute("pagesCount", postsPage.getTotalPages());
+		 model.addAttribute("currentPage", page);	 
+		model.addAttribute("user_id", userId);
+        return "linklist";
+    }
+
 	
 	@RequestMapping("/userinfo")
     public String userinfo(Model model) {

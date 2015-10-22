@@ -38,24 +38,28 @@
 									<tbody>
 										<tr>
 											<td>visitors:</td>
-											<td>visitors_count</td>
+											<td th:text="${linksInfo.countAll}">count_all</td>
 										</tr>
 										<tr>
 											<td>visitors chrome</td>
-											<td>visitors_count_chrome</td>
+											<td th:text="${linksInfo.countChrome}">chrome_count</td>
 										</tr>
 										<tr>
-											<td>visitors opera</td>
-											<td>visitors_count_opera</td>
+											<td >visitors Mozilla</td>
+											<td th:text="${linksInfo.countMozilla}">mozilla_count</td>
+										</tr>
+										<tr>
+											<td >visitors IE</td>
+											<td th:text="${linksInfo.countIE}">ie_count</td>
 										</tr>
 										<tr>
 										<tr>
 											<td>Windows OS users</td>
-											<td>visitors_windows</td>
+											<td th:text="${linksInfo.countWindows}">visitors_windows</td>
 										</tr>
 										<tr>
 											<td>Linux users</td>
-											<td>visitors_linux</td>
+											<td th:text="${linksInfo.countLinux}"> visitors_linux</td>
 										</tr>
 	
 										</tr>

@@ -62,14 +62,16 @@
     
 	<div class="row" th:each="linkInfo: ${linksInfo}">
             <tr>
-                <td th:text="${linkInfo.id}"></td>
+                <td >
+                <a th:href="'/z'+${linkInfo.id}" th:text="${linkInfo.id}"> </a>
+                </td>
                 <td th:text="${linkInfo.data}"></td>
                 <td th:text="${#dates.format(linkInfo.creationTime, 'HH:mm dd.MM.yy')}"></td>
                 <td class="text-center"><a class='btn btn-info btn-xs' th:href="@{'http://g.com/'+${linkInfo.id}}">
                 <span class="glyphicon glyphicon-edit"></span> Edit</a> 
                 <a th:href="${'removelink?link_id='+linkInfo.id}" class="btn btn-danger btn-xs">
                 <span class="glyphicon glyphicon-remove"></span> Del</a>
-                <a href="linkinfo" class="btn btn-info btn-xs">
+                <a th:href="${'linkinfo?link_id='+linkInfo.id}" class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon-signal"></span> Info</a>
                 </td>
                 
