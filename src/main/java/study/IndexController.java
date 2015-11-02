@@ -172,6 +172,7 @@ public class IndexController {
 	
 	 @RequestMapping(value = "/post", method = RequestMethod.POST)
 	    public String createLinkInfo(@RequestParam("data") String linkData) {
+		 if (linkData.length()>0)
 	        linkInfosService.addLinkInfo(new LinkInfo(linkData));
 	        return "redirect:home";
 	    }

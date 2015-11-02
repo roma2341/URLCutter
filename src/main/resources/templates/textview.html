@@ -9,8 +9,12 @@
   <script src="jquery.js"></script> 
   <link rel="stylesheet" href="css/bootstrap.css"/>
     <style type="text/css">
+
         h1.page-header {
     margin-top: -5px;
+}
+div {
+font-size: 20px
 }
 
 .sidebar {
@@ -33,7 +37,7 @@
 <body>
 
 	<div class="container-fluid main-container">
-	<a th:text="${linkInfo.data}">some text</a>
+	<div th:text="${linkInfo.data}">some text</div>
 </div>
 
 </body>
