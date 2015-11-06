@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -110,10 +112,12 @@ public class IndexController {
 	}
 	@RequestMapping(value = "/removelink", method = RequestMethod.GET)
 	public String removeLink(@RequestParam("link_id") Long linkId, HttpServletRequest request) {
-		if (User.getCurrentUser().getAuthorities().contains("ADMIN") ||
+		if (User.getCurrentUser().getAuthorities().contains(new SimpleGrantedAuthority("ADMIN")) ||
 				linkInfosService.getLinkInfo(linkId).getAuthor().getId()==User.getCurrentUserId())
 		linkInfosService.removeLinkInfo(linkId);
-		return "redirect:/home";
+		String referer = request.getHeader("Referer");
+	    return "redirect:"+ referer;
+		//return "redirect:/home";
 	}
 	@RequestMapping(value = "/removeuser", method = RequestMethod.GET)
 	public String removeUser(@RequestParam("user_id") Long userId, HttpServletRequest request) {
@@ -122,7 +126,9 @@ public class IndexController {
 			throw new IllegalArgumentException("You can't delete yourself");
 		}
 		usersService.removeUser(userId);
-		return "redirect:/admin";
+		String referer = request.getHeader("Referer");
+	    return "redirect:"+ referer;
+		//return "redirect:/admin";
 	}
 	@ExceptionHandler
 	void handleIllegalArgumentException(IllegalArgumentException e, HttpServletResponse response) throws IOException {
@@ -171,10 +177,12 @@ public class IndexController {
 	
 	
 	 @RequestMapping(value = "/post", method = RequestMethod.POST)
-	    public String createLinkInfo(@RequestParam("data") String linkData) {
+	    public String createLinkInfo(@RequestParam("data") String linkData,HttpServletRequest request) {
 		 if (linkData.length()>0)
 	        linkInfosService.addLinkInfo(new LinkInfo(linkData));
-	        return "redirect:home";
+		 String referer = request.getHeader("Referer");
+		    return "redirect:"+ referer;
+	      //  return "redirect:home";
 	    }
 	 
 }
