@@ -33,6 +33,9 @@ public void setCreationTime(Date createdAt) {
 public String getData() {
 	return data;
 }
+public String getDataHTML(){
+	return "<pre>"+data+"</pre>";
+}
 public void setData(String data) {
 	this.data = data;
 }

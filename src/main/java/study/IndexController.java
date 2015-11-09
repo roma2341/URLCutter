@@ -1,8 +1,11 @@
 package study;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,6 +30,10 @@ import study.models.User;
 import study.services.LinkInfosService;
 import study.services.UsersService;
 import study.utils.MyUtils;
+import com.googlecode.charts4j.Color;
+import com.googlecode.charts4j.GCharts;
+import com.googlecode.charts4j.PieChart;
+import com.googlecode.charts4j.Slice;
 
 @Controller
 public class IndexController {
@@ -56,6 +63,33 @@ public class IndexController {
 		 
         return "home";
     }
+	@RequestMapping(value = "/link_statistic_img{linkId}", method = RequestMethod.GET)
+	public @ResponseBody void getImage(HttpServletResponse response)
+	{
+	    BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+
+	    response.setContentType("image/png");
+	    OutputStream out;
+	    try
+	    {
+	        out = response.getOutputStream();
+	        ImageIO.write(image, "png", out);
+	        out.close();
+	    }
+	    catch (IOException ex)
+	    {
+	        //Logger.getLogger(IndexController.class.getName()).log(Level.SEVERE, null, ex);
+	    	System.out.println("Error occured during getImage call:"+ex);
+	    }
+	}
+	/*{
+		Slice s1 = Slice.newSlice(15,Color.newColor("CACACA"),"Mac","Mac");
+		PieChart pieChart = GCharts.newPieChart(s1);
+		pieChart.setTitle("Google Pie Chart", Color.BLACK, 15);
+		pieChart.setSize(720, 360);
+		pieChart.setThreeD(true);
+		model.addAttribute("pieUrl", pieChart.toURLString());
+	}*/
 
 	@RequestMapping(value = "/z{linkId}", method = RequestMethod.GET)
 	public String onShortLink(Model model,@PathVariable Long linkId,HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -143,7 +177,41 @@ public class IndexController {
 	@RequestMapping("/linkinfo")
     public String linkinfo(Model model,@RequestParam("link_id") Long linkId) {
 		// model.addAttribute("linksInfo", postsService.getLinksInfo());
-		model.addAttribute("linksInfo", linkInfosService.getLinkInfo(linkId));
+		LinkInfo currentLinkInfo = linkInfosService.getLinkInfo(linkId);
+		model.addAttribute("linksInfo", currentLinkInfo);
+		int mozillaPercent = 0,chromePercent=0,iePercent=0,windowsPercent=0,linuxPercent=0;
+		if (currentLinkInfo.getCountAll()>0)
+		{
+		mozillaPercent = currentLinkInfo.getCountMozilla()*100/currentLinkInfo.getCountAll();
+		chromePercent = currentLinkInfo.getCountChrome()*100/currentLinkInfo.getCountAll();
+		iePercent = currentLinkInfo.getCountIE()*100/currentLinkInfo.getCountAll();		
+		windowsPercent = currentLinkInfo.getCountWindows()*100/currentLinkInfo.getCountAll();
+		linuxPercent = currentLinkInfo.getCountLinux()*100/currentLinkInfo.getCountAll();
+		}
+		
+		Slice s1 = Slice.newSlice(mozillaPercent,Color.GREEN,"Mozilla");
+		Slice s2 = Slice.newSlice(chromePercent,Color.BLUE,"Chrome");
+		Slice s3 = Slice.newSlice(iePercent,Color.RED,"IE");
+		
+		Slice s4 = Slice.newSlice(windowsPercent,Color.GREEN,"Windows");
+		Slice s5 = Slice.newSlice(linuxPercent,Color.BLUE,"Linux");
+		/*int countAll;
+		int countMozilla;
+		int countChrome;
+		int countIE;
+		int countWindows;
+		int	countLinux;*/
+		PieChart pieChartBrowser = GCharts.newPieChart(s1,s2,s3);
+		pieChartBrowser.setTitle("Browser statistic", Color.BLACK, 15);
+		pieChartBrowser.setSize(450, 240);
+		pieChartBrowser.setThreeD(true);
+		PieChart pieChartOS = GCharts.newPieChart(s4,s5);
+		pieChartOS.setTitle("OS statistic", Color.BLACK, 15);
+		pieChartOS.setSize(450, 240);
+		pieChartOS.setThreeD(true);
+		
+		model.addAttribute("pieUrlBrowser", pieChartBrowser.toURLString());
+		model.addAttribute("pieUrlOS", pieChartOS.toURLString());
         return "linkinfo";
     }
 	@RequestMapping("/admin")

@@ -37,7 +37,7 @@ font-size: 20px
 <body>
 
 	<div class="container-fluid main-container">
-	<div th:text="${linkInfo.data}">some text</div>
+	<div th:utext="${linkInfo.getDataHTML()}">some text</div>
 </div>
 
 </body>
