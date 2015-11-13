@@ -6,6 +6,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.annotation.JsonView;
+
+import study.View;
+
+
 @Entity
 public class LinkInfo {
 	enum LinkType { LINK, TEXT }
@@ -68,6 +74,8 @@ public User getAuthor() {
 public void setAuthor(User author) {
 	this.author = author;
 }
+
+@JsonView(View.Summary.class)
 @NotBlank
 @Size(min = 1, max = 2048)
 private String data;
@@ -145,3 +153,4 @@ int	countLinux;
 
 
 }
+
