@@ -5,12 +5,15 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.googlecode.charts4j.collect.Lists;
 
 import study.models.LinkInfo;
 import study.models.User;
@@ -35,6 +38,10 @@ public class UsersService {
 			return usersRepo.findAll(new PageRequest(page-1, pageSize)); // spring рахує сторінки з нуля
 			
 	   }
+	@Transactional
+	public ArrayList<User> getUsers(){
+		return (ArrayList<User>) IteratorUtils.toList(usersRepo.findAll().iterator()); // spring рахує сторінки з нуля
+	}
 	
 	@Transactional(readOnly = false)
 	public void register(String login, String email, String pass) {
@@ -57,9 +64,18 @@ public class UsersService {
 
 		usersRepo.save(u);
 	}
+	@Transactional(readOnly = false)
+	public void togglePermissionById(Long id){
+		User u = getById(id);
+		u.togglePermission();
+		usersRepo.save(u);
+	}
+	
 	public void removeUser(Long id){
 		   usersRepo.delete(id);
 	   }
-	
+	public User getById(Long id){
+		return usersRepo.findOne(id);
+	}
 }
 

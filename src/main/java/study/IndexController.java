@@ -242,6 +242,13 @@ public class IndexController {
 		// model.addAttribute("linksInfo", postsService.getLinksInfo());
         return "userinfo";
     }
+	@RequestMapping(value = "/toggle_permission", method = RequestMethod.GET)
+	public ResponseEntity togglePermission(@RequestParam("user_id") Long userId, HttpServletRequest request) {
+		usersService.togglePermissionById(userId);
+		//String referer = request.getHeader("Referer");
+	   // return "redirect:"+ referer;
+		return new ResponseEntity(HttpStatus.OK);
+	}
 	
 	
 	 @RequestMapping(value = "/post", method = RequestMethod.POST)

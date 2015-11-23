@@ -11,7 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
-@EnableWebMvc
 @EnableWebMvcSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -24,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
         .antMatchers("/admin","/removeuser").hasAuthority("ADMIN").anyRequest().authenticated()
-            .antMatchers("/","/register").permitAll() // дозволити анонімним користувачам заходити на '/' 
+            .antMatchers("/","/register","/css/*").permitAll() // дозволити анонімним користувачам заходити на '/' 
             .anyRequest().authenticated() // всі інші запити потребують аутентифікації
             .and()
             .formLogin()

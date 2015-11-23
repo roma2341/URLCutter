@@ -86,8 +86,19 @@
 	<artifactId>jackson-annotations</artifactId>
 	<version>2.6.3</version>
 		</dependency>
-		
-		
+
+
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-cypher-compiler-2.1</artifactId>
+			<version>2.1.5</version>
+		</dependency>
+<dependency>
+	<groupId>org.apache.commons</groupId>
+	<artifactId>commons-collections4</artifactId>
+	<version>4.0</version>
+</dependency>
+
 	</dependencies>
 	
 	<build>

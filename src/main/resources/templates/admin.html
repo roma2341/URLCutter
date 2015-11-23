@@ -1,70 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <!-- This file has been downloaded from Bootsnipp.com. Enjoy! -->
-    <title>S-Admin interface</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <script src="js/bootstrap.min.js" type="text/javascript"></script>
-  <script src="jquery.js"></script> 
-  <link rel="stylesheet" href="css/bootstrap.css"/>
-    <style type="text/css">
-        h1.page-header {
-    margin-top: -5px;
+<meta charset="utf-8" />
+<!-- This file has been downloaded from Bootsnipp.com. Enjoy! -->
+<title>S-Admin interface</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<script src="/js/jquery.js"></script> 
+<script src="js/bootstrap.min.js" type="text/javascript"></script>
+<script src="js/mustache.min.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="css/bootstrap.css" />
+<style type="text/css">
+h1.page-header {
+	margin-top: -5px;
 }
 
 .sidebar {
-    padding-left: 0;
+	padding-left: 0;
 }
 
-.main-container { 
-    background: #FFF;
-    padding-top: 15px;
-    margin-top: -20px;
+.main-container {
+	background: #FFF;
+	padding-top: 15px;
+	margin-top: -20px;
 }
 
 .footer {
-    width: 100%;
-}  
-    </style>
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	width: 100%;
+}
+</style>
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
 </head>
 <body>
 
 	<div class="container-fluid main-container">
-	<a href= "/home" class="btn btn-primary center-block" role="button">Home</a>
-	<div class="row   custyle">
-    <table class="table table-striped custab">
-    <thead>
+		<a href="/home" class="btn btn-primary center-block" role="button">Home</a>
+		<div class="row   custyle" id="main_row"></div>
+	</div>
+	<script id="sample_template" type="text/template">
+
+<tr>
+<td>{{id}}</td>
+<td>{{login}}</td>
+<td>{{email}}</td>
+<td class="text-center">
+
+  <div class="btn-group btn-toggle" onclick="onClickToggleButton({{id}},true);"> 
+    	<button class="btn btn-xs {{#isAdmin}}btn-success{{/isAdmin}} {{^isAdmin}}btn-default{{/isAdmin}}">ON</button>
+    	<button class="btn btn-xs {{#isAdmin}}btn-default{{/isAdmin}} {{^isAdmin}}btn-success{{/isAdmin}}">OFF</button>
+
+    	</div>
+
+<a class="btn btn-danger btn-xs" href="removeuser?user_id={{id}}">
+<span class="glyphicon glyphicon-remove"></span>Del</a>
+
+<a class="btn btn-info btn-xs" href="linklist?user_id={{id}}">
+<span class="glyphicon glyphicon-signal"></span>Info</a>
+
+</td>
+</tr>
+
+</script>
+
+	<script id="table_template" type="text/template">
+<table class="table table-striped custab" id="users">
+      <thead>
         <tr>
             <th>Id</th>
             <th>Login</th>
             <th>Email</th>
             <th class="text-center">Action</th>
         </tr>
-    </thead>
-   
-	<div class="row" th:each="user: ${users}">
-	 <div th:if="${user.id}!=${currentUserId}">	<!-- hide current user -->
-            <tr>
-                <td th:text="${user.id}"></td>
-                <td th:text="${user.login}"></td>
-                <td th:text="${user.email}"></td>
-                <td class="text-center"><a class='btn btn-info btn-xs' th:href="@{'http://g.com/'+${user.id}}">
-                <span class="glyphicon glyphicon-edit"></span> Edit</a> 
-                <a th:href="${'removeuser?user_id='+user.id}" class="btn btn-danger btn-xs">
-                <span class="glyphicon glyphicon-remove"></span> Del</a>
-                <a th:href="${'linklist?user_id='+user.id}" class="btn btn-info btn-xs">
-                <span class="glyphicon glyphicon-signal"></span> Info</a>
-                </td>
-                
-            </tr>
-     </div>
-	</div>
+    </thead> 
+	 
     </table>
-    </div>
-</div>
-
+</script>
+	<script type="text/javascript">
+	function onClickToggleButton(id,updateServerData){
+		console.log(event.target.parentNode);
+		
+    	    //event.target.toggleClass('btn-default btn-success');
+    	    $(event.target.parentNode).children().toggleClass('btn-default btn-success');
+    	 // <![CDATA[
+    	             if (!!updateServerData && updateServerData!=undefined)
+    	            	 // ]]>
+    	    	{
+   		 $.ajax({
+   		    type: 'GET',
+   		    url: '/toggle_permission?user_id='+id,
+   		    cache: false,
+   		    error: function(){
+   		    	alert('error toggling permission');
+   		    }
+   		    });  
+    	    	}
+    
+	}
+    $(document).ready(function () {
+    	    	
+    		var emptyTable = $('#table_template').html();
+    		 var template = $('#sample_template').html();
+    		 var interval = 1000;   //number of mils between each call
+    		 function addUser(user){
+    			 $('#users').append((Mustache.to_html(template,user)));
+    	     }
+    		 function clearUsers(){
+    			 $('#users').remove();
+    		 }
+    		 var refresh = function() {
+    		 $.ajax({
+    type: 'GET',
+    url: '/json/userlist',
+    cache: false,
+    success:function(users){
+    	clearUsers();
+    	$('#main_row').append(emptyTable);
+    	$.each(users,function(i,user){
+    		addUser(user);
+    	});
+    	 setTimeout(function() {
+             refresh();
+    	 },interval);
+    },
+    error: function(){
+    	alert('error loading users');
+    }
+    });
+    		 };
+    		 refresh();
+    		 });
+    		 
+     
+     </script>
 </body>
 </html>

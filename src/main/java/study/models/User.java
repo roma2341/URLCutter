@@ -19,7 +19,10 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import study.UrlCutterApplication;
+import study.View;
 
 
 @Entity
@@ -30,25 +33,37 @@ import study.UrlCutterApplication;
 public class User implements UserDetails{
 	private static final long serialVersionUID = -532710433531902917L;
 	public enum Permissions{PERMISSIONS_ADMIN,PERMISSIONS_USER};
+	
+	@JsonView(View.Summary.class)
 	@Id
 	@GeneratedValue
 	private Long id;
 	
+	@JsonView(View.Summary.class)
 	@NotBlank
 	@Size(min = 1, max = 512)
 	@Column(unique = true)
 	private String login;
 	
+	@JsonView(View.Summary.class)
+	private boolean isAdmin = false;
+	
+	public boolean isAdmin() {
+		return isAdmin;
+	}
+
+	@JsonView(View.Summary.class)
 	@NotBlank
 	  @Size(min = 1, max = 512)
 	  @Column(unique = true)
 	  private String email;
 
+	@JsonView(View.Summary.class)
 	@NotBlank
     @Size(min = 1, max = 100)
 	private String password;
 	  
-	  
+	@JsonView(View.Summary.class)
 	  private Permissions permission=Permissions.PERMISSIONS_USER;
 	  
 	  @OneToMany(mappedBy = "author")
@@ -87,8 +102,11 @@ public class User implements UserDetails{
 		return permission;
 	}
 
+
 	public void setPermission(Permissions permission) {
 		this.permission = permission;
+		if (permission==Permissions.PERMISSIONS_ADMIN)isAdmin=true;
+		else isAdmin=false;
 	}
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -146,6 +164,13 @@ public class User implements UserDetails{
 		 public User(){
 			  super();
 		  }
+		 public void togglePermission(){
+			 if (permission==Permissions.PERMISSIONS_ADMIN)
+			 permission=Permissions.PERMISSIONS_USER;
+			 else permission=Permissions.PERMISSIONS_ADMIN;
+			 if (permission==Permissions.PERMISSIONS_ADMIN)isAdmin=true;
+			 else isAdmin=false;
+		 }
 
 		@Override
 		public String getPassword() {
