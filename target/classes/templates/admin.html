@@ -54,8 +54,8 @@ h1.page-header {
 
     	</div>
 
-<a class="btn btn-danger btn-xs" href="removeuser?user_id={{id}}">
-<span class="glyphicon glyphicon-remove"></span>Del</a>
+<a class="btn btn-danger btn-xs" href="#">
+<span class="glyphicon glyphicon-remove" onclick="onClickDeleteUserButton({{id}})"></span>Del</a>
 
 <a class="btn btn-info btn-xs" href="linklist?user_id={{id}}">
 <span class="glyphicon glyphicon-signal"></span>Info</a>
@@ -98,6 +98,19 @@ h1.page-header {
    		    });  
     	    	}
     
+	}
+	function onClickDeleteUserButton(id){
+		 
+	    	    	
+	   		 $.ajax({
+	   		    type: 'GET',
+	   		    url: '/removeuser?user_id='+id,
+	   		    cache: false,
+	   		    error: function(){
+	   		    	alert('error deleting permission');
+	   		    }
+	   		    });  
+	    	    	
 	}
     $(document).ready(function () {
     	    	

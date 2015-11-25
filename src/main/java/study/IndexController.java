@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -154,14 +155,16 @@ public class IndexController {
 		//return "redirect:/home";
 	}
 	@RequestMapping(value = "/removeuser", method = RequestMethod.GET)
-	public String removeUser(@RequestParam("user_id") Long userId, HttpServletRequest request) {
-		if(User.getCurrentUserId()==userId)
+	// @PreAuthorize("#currentUser.id != #userId")
+	public ResponseEntity removeUser(@RequestParam("user_id") Long userId){//, HttpServletRequest request) {
+		/*if(User.getCurrentUserId()==userId)
 		{
 			throw new IllegalArgumentException("You can't delete yourself");
-		}
+		}*/
 		usersService.removeUser(userId);
-		String referer = request.getHeader("Referer");
-	    return "redirect:"+ referer;
+		//String referer = request.getHeader("Referer");
+		return new ResponseEntity(HttpStatus.OK);
+	    //return "redirect:"+ referer;
 		//return "redirect:/admin";
 	}
 	@ExceptionHandler
